@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SomeClassNoMockitoTest {
 	@Test
 	void testSomeMethod() {
-		LocalDate someDate = LocalDate.of(2000, 1, 5);
-		SomeClassWithSupplier someClass = new SomeClassWithSupplier(() -> someDate);
+		LocalDate today = LocalDate.of(2000, 1, 5);
+		SomeClassWithSupplier someClass = new SomeClassWithSupplier(() -> today);
 
 		long returnedDays = someClass.daysSince2000();
 

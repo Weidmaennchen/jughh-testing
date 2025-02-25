@@ -1,28 +1,66 @@
 package hh.jug;
 
-import jdk.jshell.spi.ExecutionControl;
-
 import java.time.LocalDate;
+import java.util.List;
+
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 
 public class KontorenditeService {
-    private final WaehrungskursService waehrungskursService;
-    private final KontoDatenbank kontoDatenbank;
+	private final WaehrungskursHttpClient waehrungskursHttpClient;
+	private final KontoDatenbank kontoDatenbank;
 
-    public KontorenditeService(WaehrungskursService waehrungskursService, KontoDatenbank kontoDatenbank) {
-        this.waehrungskursService = waehrungskursService;
-        this.kontoDatenbank = kontoDatenbank;
-    }
+	public KontorenditeService(WaehrungskursHttpClient waehrungskursHttpClient, KontoDatenbank kontoDatenbank) {
+		this.waehrungskursHttpClient = waehrungskursHttpClient;
+		this.kontoDatenbank = kontoDatenbank;
+	}
 
-    public Jahresrendite calculateJahresrendite(String kontonr) {
-        LocalDate now = LocalDate.now();
-        Kontostand anfangsstand = kontoDatenbank.getKontostand(kontonr,now);
-        Kontostand endstand = kontoDatenbank.getKontostand(kontonr, now.with(firstDayOfYear()));
+	public Rendite calculateJahresrenditeThisYearSoFar(String kontonr) {
+		LocalDate now = LocalDate.now();
+		LocalDate firstDayOfYear = now.with(firstDayOfYear());
 
-        if(anfangsstand == null) {
-            throw new InvalidKontonummerException(kontonr);
-        }
+		Kontostand anfangsWertInWaehrung = kontoDatenbank.getKontostand(kontonr, firstDayOfYear);
+		if (anfangsWertInWaehrung == null) {
+			throw new BestandNotFoundException(kontonr, firstDayOfYear);
+		}
+		Kontostand endwertInWaehrung = kontoDatenbank.getKontostand(kontonr, now);
+		if (endwertInWaehrung == null) {
+			throw new BestandNotFoundException(kontonr, now);
+		}
 
-        throw new RuntimeException();
-    }
+		double diff = endwertInWaehrung.wert() - anfangsWertInWaehrung.wert();
+		List<Transaktion> transaktionen = kontoDatenbank.getTransaktionen(kontonr, firstDayOfYear, now);
+
+		double profitInKontoWaehrung = profitInKontoWaehrung(diff, transaktionen);
+
+		double endwertInEuro = inEuro(anfangsWertInWaehrung.waehrung(), endwertInWaehrung.wert(), now);
+		double anfangswertInEuro = inEuro(anfangsWertInWaehrung.waehrung(), anfangsWertInWaehrung.wert(), firstDayOfYear);
+		double diffInEuro = endwertInEuro - anfangswertInEuro;
+		double profitInEuro = profitInEuro(diffInEuro, transaktionen);
+
+		return new Rendite(profitInKontoWaehrung, profitInEuro);
+	}
+
+	private double inEuro(String waehrung, double wert, LocalDate firstDayOfYear) {
+		return waehrungskursHttpClient.toEuro(waehrung, wert, firstDayOfYear);
+	}
+
+	private double profitInEuro(double diff, List<Transaktion> transaktionen) {
+		double result = diff;
+		for (Transaktion transaktion : transaktionen) {
+			if (transaktion.art() == Transaktion.Art.BUCHUNG) {
+				result -= transaktion.wertInEuro();
+			}
+		}
+		return result;
+	}
+
+	private double profitInKontoWaehrung(double diff, List<Transaktion> transaktionen) {
+		double result = diff;
+		for (Transaktion transaktion : transaktionen) {
+			if (transaktion.art() == Transaktion.Art.BUCHUNG) {
+				result -= transaktion.wertInKontowaehrung();
+			}
+		}
+		return result;
+	}
 }

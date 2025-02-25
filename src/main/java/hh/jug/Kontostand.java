@@ -1,4 +1,4 @@
 package hh.jug;
 
-public record Kontostand() {
+public record Kontostand(String waehrung, double wert) {
 }

@@ -9,7 +9,7 @@ class BargangFachlichTest {
 	@Test
 	@DisplayName("Minor + Adult Bar = no fun")
 	void minorsHaveNoFunInAdultsOnlyBar() {
-		Person child = Person.ofAge(17);
+		Person child = new Person(17);
 		Venue bar = new AdultsOnlyBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
@@ -17,9 +17,9 @@ class BargangFachlichTest {
 	}
 
 	@Test
-	@DisplayName("Minor + Kids Bar = no fun")
+	@DisplayName("Minor + Kids Bar = fun")
 	void minorsHaveFunInKidsBar() {
-		Person child = Person.ofAge(17);
+		Person child = new Person(17);
 		Venue bar = new KidsBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
@@ -29,7 +29,7 @@ class BargangFachlichTest {
 	@Test
 	@DisplayName("Minor + Open Bar = fun")
 	void minorsHaveFunInOpenBar() {
-		Person child = Person.ofAge(17);
+		Person child = new Person(17);
 		Venue bar = new OpenBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
@@ -39,7 +39,7 @@ class BargangFachlichTest {
 	@Test
 	@DisplayName("Adult + Adult Bar = fun")
 	void adultsHaveFunInAdultsOnlyBar() {
-		Person child = Person.ofAge(18);
+		Person child = new Person(18);
 		Venue bar = new AdultsOnlyBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
@@ -49,7 +49,7 @@ class BargangFachlichTest {
 	@Test
 	@DisplayName("Adult + Kids Bar = no fun")
 	void adultsHaveNoFunInKidsBar() {
-		Person child = Person.ofAge(18);
+		Person child = new Person(18);
 		Venue bar = new KidsBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
@@ -59,7 +59,7 @@ class BargangFachlichTest {
 	@Test
 	@DisplayName("Adult + OpenBar = fun")
 	void adultsHaveFunInOpenBar() {
-		Person child = Person.ofAge(18);
+		Person child = new Person(18);
 		Venue bar = new OpenBar();
 
 		FunTimeResult result = child.tryHaveFun(bar);
