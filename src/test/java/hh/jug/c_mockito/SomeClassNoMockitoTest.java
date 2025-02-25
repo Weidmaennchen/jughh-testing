@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SomeClassNoMockitoTest {
     @Test
     void testSomeMethod() {
-        LocalDate someDate = LocalDate.of(1989, 1, 13);
+        LocalDate someDate = LocalDate.of(2000, 1, 5);
         SomeClassWithSupplier someClass = new SomeClassWithSupplier(() -> someDate);
 
-        LocalDate returnedLocalDate = someClass.someMethod();
-        assertEquals(someDate, returnedLocalDate);
+        long returnedDays = someClass.daysSince2000();
+
+        assertEquals(4, returnedDays);
     }
 }

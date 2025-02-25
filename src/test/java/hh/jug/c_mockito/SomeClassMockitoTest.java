@@ -1,6 +1,5 @@
 package hh.jug.c_mockito;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 class SomeClassMockitoTest {
-    private final static LocalDate LOCAL_DATE = LocalDate.of(1989, 1, 13);
-
+    private final static LocalDate LOCAL_DATE = LocalDate.of(2000, 1, 5);
     private AutoCloseable closeable;
 
     @InjectMocks
@@ -44,9 +42,9 @@ class SomeClassMockitoTest {
     }
 
     @Test
-    public void testSomeMethod(){
-        LocalDate returnedLocalDate = someClass.someMethod();
+    public void testSomeMethod() {
+        long returnedDays = someClass.daysSince2000();
 
-        assertEquals(LOCAL_DATE, returnedLocalDate);
+        assertEquals(4, returnedDays);
     }
 }

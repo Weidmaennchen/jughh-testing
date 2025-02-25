@@ -1,9 +1,9 @@
-package hh.jug;
+package hh.jug.a_basics;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static de.Schaltjahr.isSchaltjahr;
+import static hh.jug.a_basics.Schaltjahr.isSchaltjahr;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
