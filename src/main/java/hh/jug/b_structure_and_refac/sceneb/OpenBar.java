@@ -1,4 +1,4 @@
 package hh.jug.b_structure_and_refac.sceneb;
 
-public class AdultsOnlyBar implements Venue {
+public class OpenBar implements Venue{
 }
