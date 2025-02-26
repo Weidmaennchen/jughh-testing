@@ -10,6 +10,7 @@ import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class KontorenditeServiceTest {
@@ -48,11 +49,15 @@ class KontorenditeServiceTest {
         when(kontoDatenbank.getTransaktionen("testnummer", firstDayOfYear, mockedDate)).thenReturn(mockedTransaktionen);
 
         try (MockedStatic<LocalDate> topDateTimeUtilMock = Mockito.mockStatic(LocalDate.class, Mockito.CALLS_REAL_METHODS)) {
-            topDateTimeUtilMock.when(() -> LocalDate.now()).thenReturn(mockedDate);
+            topDateTimeUtilMock.when(LocalDate::now).thenReturn(mockedDate);
             Rendite rendite = kontorenditeService.calculateJahresrenditeThisYearSoFar("testnummer");
 
             assertEquals(20, rendite.absolute());
             assertEquals(0.01, rendite.relative());
         }
+
+        verify(kontoDatenbank).getKontostand("testnummer", firstDayOfYear);
+        verify(kontoDatenbank).getKontostand("testnummer", mockedDate);
+        verify(kontoDatenbank).getTransaktionen("testnummer", firstDayOfYear, mockedDate);
     }
 }
